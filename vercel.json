@@ -1,0 +1,5 @@
+{
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [{ "source": "/((?!assets/|favicon\\.png).*)", "destination": "/index.html" }]
+}
