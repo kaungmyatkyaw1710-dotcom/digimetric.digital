@@ -3,8 +3,9 @@
 //    version from the repo history (FALLBACK_COMMIT), so the site never goes blank.
 // 2. Applies the small text edits below, so a text change does not need a new
 //    2.6 MB upload. Upload a new index.html later and the edits are simply skipped.
-// 3. Adds the small scripts in EXTRA_SCRIPTS (motion video packages, consultation form →
-//    Messenger) unless index.html already contains them.
+// 3. Adds the small scripts in EXTRA_SCRIPTS (motion video packages, social media channel
+//    choice on the consultation form) unless index.html already contains them.
+// The consultation form posts to api/consult.js, which emails the request to Gmail.
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 const REPO = 'kaungmyatkyaw1710-dotcom/digimetric.digital';
@@ -15,6 +16,8 @@ const EDITS = [
   ['agency for Myanmar business owners in Thailand.', 'agency for business owners in Thailand.'],
   ['ในกรุงเทพฯ สำหรับเจ้าของธุรกิจชาวเมียนมาในประเทศไทย', 'ในกรุงเทพฯ สำหรับเจ้าของธุรกิจในประเทศไทย'],
   ['为在泰缅甸企业主服务', '为在泰企业主服务'],
+  // Consultation form: send to our own /api/consult (Gmail SMTP) instead of FormSubmit
+  ['`https://formsubmit.co/ajax/digimetric1710@gmail.com`', '`/api/consult`'],
 ];
 
 let html;
@@ -37,7 +40,7 @@ for (const [from, to] of EDITS) {
 
 const EXTRA_SCRIPTS = [
   ['motion-packages.js', '__dmMotion'],   // Motion Video Editing packages (Home + Services)
-  ['consult-messenger.js', '__dmMsgr'],   // Free consultation form → Facebook Page Messenger
+  ['consult-social.js', '__dmSocial'],    // Social media channels choice on the consultation form
 ];
 for (const [file, marker] of EXTRA_SCRIPTS) {
   if (!existsSync(file) || html.includes(marker)) continue;
