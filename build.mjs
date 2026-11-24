@@ -3,6 +3,8 @@
 //    version from the repo history (FALLBACK_COMMIT), so the site never goes blank.
 // 2. Applies the small text edits below, so a text change does not need a new
 //    2.6 MB upload. Upload a new index.html later and the edits are simply skipped.
+// 3. Adds motion-packages.js (Motion Video Editing packages on the Services page)
+//    unless index.html already contains it.
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 const REPO = 'kaungmyatkyaw1710-dotcom/digimetric.digital';
@@ -31,6 +33,12 @@ for (const [from, to] of EDITS) {
   const n = html.split(from).length - 1;
   if (n) { html = html.split(from).join(to); console.log(`Edited (${n}x):`, to); }
   else console.log('Skipped (not found):', from);
+}
+
+if (existsSync('motion-packages.js') && !html.includes('__dmMotion')) {
+  const js = readFileSync('motion-packages.js', 'utf8');
+  html = html.replace('</body>', () => `<script>\n${js}\n</script>\n</body>`);
+  console.log('Added motion-packages.js');
 }
 
 mkdirSync('dist', { recursive: true });
