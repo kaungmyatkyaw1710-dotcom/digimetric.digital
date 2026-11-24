@@ -3,8 +3,8 @@
 //    version from the repo history (FALLBACK_COMMIT), so the site never goes blank.
 // 2. Applies the small text edits below, so a text change does not need a new
 //    2.6 MB upload. Upload a new index.html later and the edits are simply skipped.
-// 3. Adds motion-packages.js (Motion Video Editing packages on the Services page)
-//    unless index.html already contains it.
+// 3. Adds the small scripts in EXTRA_SCRIPTS (motion video packages, consultation form →
+//    Messenger) unless index.html already contains them.
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 const REPO = 'kaungmyatkyaw1710-dotcom/digimetric.digital';
@@ -35,10 +35,15 @@ for (const [from, to] of EDITS) {
   else console.log('Skipped (not found):', from);
 }
 
-if (existsSync('motion-packages.js') && !html.includes('__dmMotion')) {
-  const js = readFileSync('motion-packages.js', 'utf8');
+const EXTRA_SCRIPTS = [
+  ['motion-packages.js', '__dmMotion'],   // Motion Video Editing packages (Home + Services)
+  ['consult-messenger.js', '__dmMsgr'],   // Free consultation form → Facebook Page Messenger
+];
+for (const [file, marker] of EXTRA_SCRIPTS) {
+  if (!existsSync(file) || html.includes(marker)) continue;
+  const js = readFileSync(file, 'utf8');
   html = html.replace('</body>', () => `<script>\n${js}\n</script>\n</body>`);
-  console.log('Added motion-packages.js');
+  console.log('Added', file);
 }
 
 mkdirSync('dist', { recursive: true });
