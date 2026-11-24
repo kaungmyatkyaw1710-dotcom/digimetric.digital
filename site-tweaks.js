@@ -1,29 +1,47 @@
 /* Live-site tweaks applied by build.mjs on Vercel (the React source already has them):
-   - the Free Consultation form section is removed: hidden, and every link that pointed
-     to it (#consultation) now opens the Contact page instead. Safe to load twice. */
+   - the Free Consultation form section is removed, and the "Free consultation" buttons
+     (hero, menu bar, page headers, mobile menu, footer) are removed too;
+   - other links that pointed to the form (#consultation), such as "Get this package",
+     now open the Contact page, and the end-of-page band button says "Contact Us".
+   Safe to load twice. */
 (() => {
   if (window.__dmTweaks) return;
   window.__dmTweaks = true;
 
+  const HIDE_IN = '.gh-ctas,.nav,.ph,.overlay,.foot-links';
   const st = document.createElement('style');
-  st.textContent = '#consultation{display:none!important}.ph a[data-was-consult],.foot-links a[data-was-consult]{display:none!important}';
+  st.textContent = '#consultation{display:none!important}' +
+    HIDE_IN.split(',').map(s => `${s} a[data-consult]`).join(',') + '{display:none!important}';
   document.head.appendChild(st);
+
+  const CONTACT = { en: 'Contact Us', th: 'ติดต่อเรา', zh: '联系我们' };
+  const langKey = () => {
+    const l = (document.documentElement.lang || 'en').toLowerCase();
+    return l.startsWith('th') ? 'th' : l.startsWith('zh') ? 'zh' : 'en';
+  };
 
   const fix = () => {
     for (const a of document.querySelectorAll('a[href="#consultation"]')) {
       a.setAttribute('href', '#contact');
-      // the Contact page header had a "Free consultation" button pointing at the form: drop it
-      if (a.closest('.ph') && document.getElementById('consultation')) a.setAttribute('data-was-consult', '');
-      // the footer already links to Contact Us: drop the duplicate
-      if (a.closest('.foot-links')) a.setAttribute('data-was-consult', '');
+      a.setAttribute('data-consult', '');
+    }
+    // end-of-page band: keep the button, now "Contact Us"
+    for (const a of document.querySelectorAll('.ctab a[data-consult]')) {
+      const tn = [...a.childNodes].find(n => n.nodeType === 3 && n.nodeValue.trim());
+      const want = CONTACT[langKey()] + ' ';
+      if (tn && tn.nodeValue !== want) tn.nodeValue = want;
     }
   };
   // rewrite before the site's router reads the link
-  document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a[href="#consultation"]'); if (a) a.setAttribute('href', '#contact'); }, true);
+  document.addEventListener('click', e => {
+    const a = e.target.closest && e.target.closest('a[href="#consultation"]');
+    if (a) a.setAttribute('href', '#contact');
+  }, true);
   const start = () => {
     let q = false;
-    new MutationObserver(() => { if (!q) { q = true; requestAnimationFrame(() => { q = false; fix(); }); } })
-      .observe(document.body, { childList: true, subtree: true });
+    const later = () => { if (!q) { q = true; requestAnimationFrame(() => { q = false; fix(); }); } };
+    new MutationObserver(later).observe(document.body, { childList: true, subtree: true, characterData: true });
+    new MutationObserver(later).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
     fix();
   };
   if (document.body) start(); else document.addEventListener('DOMContentLoaded', start);
