@@ -3,9 +3,8 @@
 //    version from the repo history (FALLBACK_COMMIT), so the site never goes blank.
 // 2. Applies the small text edits below, so a text change does not need a new
 //    2.6 MB upload. Upload a new index.html later and the edits are simply skipped.
-// 3. Adds the small scripts in EXTRA_SCRIPTS (motion video packages, social media channel
-//    choice on the consultation form) unless index.html already contains them.
-// The consultation form posts to api/consult.js, which emails the request to Gmail.
+// 3. Adds the small scripts in EXTRA_SCRIPTS (motion video packages, site tweaks such as
+//    the removed Free Consultation form) unless index.html already contains them.
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 
 const REPO = 'kaungmyatkyaw1710-dotcom/digimetric.digital';
@@ -18,6 +17,10 @@ const EDITS = [
   ['为在泰缅甸企业主服务', '为在泰企业主服务'],
   // Consultation form: send to our own /api/consult (Gmail SMTP) instead of FormSubmit
   ['`https://formsubmit.co/ajax/digimetric1710@gmail.com`', '`/api/consult`'],
+  // Contact page subtitle: no more "send a free consultation request below" (form removed)
+  ["Call or message us on the channel you like — or send a free consultation request below.", "Call or message us on the channel you like and we'll get back to you."],
+  ["โทรหรือส่งข้อความหาเราทางช่องทางที่คุณสะดวก หรือส่งคำขอรับคำปรึกษาฟรีด้านล่าง", "โทรหรือส่งข้อความหาเราทางช่องทางที่คุณสะดวก แล้วเราจะติดต่อกลับ"],
+  ["通过您喜欢的渠道致电或发消息给我们——也可以在下方提交免费咨询申请。", "通过您喜欢的渠道致电或发消息给我们，我们会与您联系。"],
 ];
 
 let html;
@@ -40,7 +43,7 @@ for (const [from, to] of EDITS) {
 
 const EXTRA_SCRIPTS = [
   ['motion-packages.js', '__dmMotion'],   // Motion Video Editing packages (Home + Services)
-  ['consult-social.js', '__dmSocial'],    // Social media channels choice on the consultation form
+  ['site-tweaks.js', '__dmTweaks'],       // Free Consultation form removed; its links open Contact
 ];
 for (const [file, marker] of EXTRA_SCRIPTS) {
   if (!existsSync(file) || html.includes(marker)) continue;
