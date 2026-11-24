@@ -1,4 +1,4 @@
-/* Motion Video Editing packages — shown on the Services page, under the main packages.
+/* Motion Video Editing packages — shown under the main packages (Home and Services pages).
    Plain JS (no React) so the live site can also receive it through build.mjs on Vercel.
    Safe to load twice: the second copy does nothing. */
 (() => {
@@ -101,10 +101,9 @@
   let shownLang = '';
   const sync = () => {
     const pk = document.getElementById('packages');
-    // Services page = packages section + a page hero (Home has packages but no page hero)
-    const onServices = pk && document.querySelector('.ph');
+    // shown wherever the main packages are (Home and Services)
     let box = document.getElementById('motion-packages');
-    if (!onServices) { if (box) box.remove(); return; }
+    if (!pk) { if (box) box.remove(); return; }
     const wrap = pk.querySelector('.wrap') || pk;
     const k = langKey();
     if (!box || box.parentNode !== wrap) {
