@@ -45,6 +45,7 @@ const EXTRA_SCRIPTS = [
   ['motion-packages.js', '__dmMotion'],   // Motion Video Editing packages (Home + Services)
   ['site-tweaks.js', '__dmTweaks'],       // Free Consultation form removed; its links open Contact
   ['service-images.js', '__dmSvcImg'],    // photos on the 8 service cards (files in img/services/)
+  ['client-logos.js', '__dmClients'],     // 8 more logos in Brands We Work With (files in img/clients/)
 ];
 for (const [file, marker] of EXTRA_SCRIPTS) {
   if (!existsSync(file) || html.includes(marker)) continue;
