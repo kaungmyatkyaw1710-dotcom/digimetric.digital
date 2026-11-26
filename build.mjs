@@ -5,7 +5,7 @@
 //    2.6 MB upload. Upload a new index.html later and the edits are simply skipped.
 // 3. Adds the small scripts in EXTRA_SCRIPTS (motion video packages, site tweaks such as
 //    the removed Free Consultation form) unless index.html already contains them.
-import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync, cpSync } from 'node:fs';
 
 const REPO = 'kaungmyatkyaw1710-dotcom/digimetric.digital';
 const FALLBACK_COMMIT = 'a2a945e7ac96c18c2ee1da75cbe9d8bf4ca87fcf';
@@ -44,6 +44,7 @@ for (const [from, to] of EDITS) {
 const EXTRA_SCRIPTS = [
   ['motion-packages.js', '__dmMotion'],   // Motion Video Editing packages (Home + Services)
   ['site-tweaks.js', '__dmTweaks'],       // Free Consultation form removed; its links open Contact
+  ['service-images.js', '__dmSvcImg'],    // photos on the 8 service cards (files in img/services/)
 ];
 for (const [file, marker] of EXTRA_SCRIPTS) {
   if (!existsSync(file) || html.includes(marker)) continue;
@@ -54,4 +55,5 @@ for (const [file, marker] of EXTRA_SCRIPTS) {
 
 mkdirSync('dist', { recursive: true });
 writeFileSync('dist/index.html', html);
+if (existsSync('img')) { cpSync('img', 'dist/img', { recursive: true }); console.log('Copied img/ to dist/img'); }
 console.log('Built dist/index.html,', html.length, 'bytes');
