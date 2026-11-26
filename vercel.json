@@ -1,1 +1,1 @@
-{"buildCommand": "node build.mjs", "outputDirectory": "dist", "cleanUrls": true, "trailingSlash": false, "rewrites": [{"source": "/((?!api/).*)", "destination": "/"}]}
+{"buildCommand": "node build.mjs", "outputDirectory": "dist", "cleanUrls": true, "trailingSlash": false, "rewrites": [{"source": "/((?!api/).*)", "destination": "/"}], "images": {"sizes": [640, 1080], "formats": ["image/webp"], "minimumCacheTTL": 2592000, "localPatterns": [{"pathname": "^/img/.*$"}]}}
